@@ -1,0 +1,1 @@
+__attribute__((section(".task")))void task_3(void);

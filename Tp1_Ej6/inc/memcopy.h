@@ -1,0 +1,1 @@
+void memcopy(uint32_t* dst, const uint32_t* src, uint32_t size_bytes);

@@ -1,0 +1,20 @@
+ARM GAS  src/kernel/reset_vector.s 			page 1
+
+
+   1              	.extern _start
+   2              	.global _reset_vector
+   3              	.code 32
+   4              	
+   5              	.section .reset , "ax"
+   6              	
+   7              	_reset_vector: 
+   8 0000 FEFFFFEA 	    B _start
+ARM GAS  src/kernel/reset_vector.s 			page 2
+
+
+DEFINED SYMBOLS
+src/kernel/reset_vector.s:7      .reset:0000000000000000 _reset_vector
+src/kernel/reset_vector.s:8      .reset:0000000000000000 $a
+
+UNDEFINED SYMBOLS
+_start

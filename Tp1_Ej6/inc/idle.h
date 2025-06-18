@@ -1,0 +1,1 @@
+__attribute__((section(".idle_text")))void idle(void);

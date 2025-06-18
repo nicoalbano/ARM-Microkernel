@@ -1,0 +1,178 @@
+ARM GAS  src/kernel/startup.s 			page 1
+
+
+   1              	.extern _reset_vector
+   2              	.extern _undefined_vector
+   3              	.extern _SVC_vector
+   4              	.extern _prefetch_vector
+   5              	.extern _data_a_vector
+   6              	.extern _reserved_vector
+   7              	.extern _IRQ_vector
+   8              	.extern __irq_stack_top__
+   9              	.extern __fiq_stack_top__
+  10              	.extern __svc_stack_top__
+  11              	.extern __abt_stack_top__
+  12              	.extern __und_stack_top__
+  13              	.extern __sys_stack_top__
+  14              	.extern idle
+  15              	
+  16              	.extern TCB_init
+  17              	
+  18              	.extern __board_init
+  19              	
+  20              	
+  21              	
+  22              	
+  23              	.equ USR_MODE, 0x10
+  24              	.equ FIQ_MODE, 0x11
+  25              	.equ IRQ_MODE, 0x12
+  26              	.equ SVC_MODE, 0x13
+  27              	.equ ABT_MODE, 0x17
+  28              	.equ UND_MODE, 0x1B
+  29              	.equ SYS_MODE, 0x1F
+  30              	.equ DIR_FISICA2, 0x70800000
+  31              	
+  32              	.equ I_BIT, 0x80
+  33              	.equ F_BIT, 0x40
+  34              	
+  35              	.code 32
+  36              	
+  37              	.global _start
+  38              	.global _table_start
+  39              	
+  40              	.section .text
+  41              	
+  42              	_table_start:
+  43 0000 14F09FE5 	    LDR PC, add_reset_vector
+  44 0004 14F09FE5 	    LDR PC, add_undefined_vector
+  45 0008 14F09FE5 	    LDR PC, add_SVC_vector
+  46 000c 14F09FE5 	    LDR PC, add_prefetch_vector
+  47 0010 14F09FE5 	    LDR PC, add_data_a_vector
+  48 0014 14F09FE5 	    LDR PC, add_reserved_vector
+  49 0018 14F09FE5 	    LDR PC, add_IRQ_vector
+  50              	
+  51              	
+  52              	
+  53 001c 00000000 	add_reset_vector: .word _reset_vector
+  54 0020 00000000 	add_undefined_vector: .word _undefined_vector
+  55 0024 00000000 	add_SVC_vector: .word _SVC_vector
+  56 0028 00000000 	add_prefetch_vector: .word _prefetch_vector
+  57 002c 00000000 	add_data_a_vector: .word _data_a_vector
+ARM GAS  src/kernel/startup.s 			page 2
+
+
+  58 0030 00000000 	add_reserved_vector: .word _reserved_vector
+  59 0034 00000000 	add_IRQ_vector: .word _IRQ_vector 
+  60              	
+  61              	
+  62              	_start: 
+  63              	    _TABLE_COPY:
+  64 0038 0000A0E3 	        MOV R0, #0
+  65 003c 70109FE5 	        LDR R1, =_table_start
+  66 0040 70209FE5 	        LDR R2, =_start
+  67              	    _TABLE_LOOP:
+  68 0044 043091E4 	        LDR R3, [R1], #4
+  69 0048 043080E4 	        STR R3, [ R0 ], #4
+  70              	    
+  71 004c 020051E1 	        CMP R1, R2
+  72 0050 FBFFFF1A 	        BNE _TABLE_LOOP
+  73              	
+  74              	_STACK_INIT: 
+  75 0054 D2F021E3 	    MSR cpsr_c,#(IRQ_MODE | I_BIT | F_BIT)
+  76 0058 5CD09FE5 	    LDR SP,=__irq_stack_top__
+  77              	
+  78 005c D1F021E3 	    MSR cpsr_c,#(FIQ_MODE | I_BIT | F_BIT)
+  79 0060 58D09FE5 	    LDR SP,=__fiq_stack_top__
+  80              	
+  81 0064 D7F021E3 	    MSR cpsr_c,#(ABT_MODE | I_BIT | F_BIT)
+  82 0068 54D09FE5 	    LDR SP,=__abt_stack_top__
+  83              	
+  84 006c DBF021E3 	    MSR cpsr_c,#(UND_MODE | I_BIT | F_BIT)
+  85 0070 50D09FE5 	    LDR SP,=__und_stack_top__
+  86              	
+  87 0074 DFF021E3 	    MSR cpsr_c,#(SYS_MODE | I_BIT | F_BIT)
+  88              	
+  89 0078 4CD09FE5 	    LDR SP,=__sys_stack_top__
+  90              	
+  91 007c D3F021E3 	    MSR cpsr_c,#(SVC_MODE | I_BIT | F_BIT)
+  92 0080 48D09FE5 	    LDR SP,=__svc_stack_top__
+  93              	
+  94              	
+  95 0084 48009FE5 	    LDR R0, =DIR_FISICA2
+  96 0088 48109FE5 	      LDR R1, =0x12345678
+  97 008c 001080E5 	      STR R1, [R0]
+  98              	
+  99              	 init_board:
+ 100 0090 44A09FE5 	    LDR R10,= __board_init
+ 101 0094 0FE0A0E1 	    MOV LR, PC
+ 102 0098 1AFF2FE1 	    BX R10
+ 103              	
+ 104              	        // Habilitar MMU
+ 105 009c 101F11EE 	    MRC p15, 0,R1, c1, c0, 0    // Leer reg. control.
+ 106 00a0 011081E3 	    ORR R1, R1, #0x1             // Bit 0 es habilitación de MMU.
+ 107 00a4 101F01EE 	    MCR p15, 0, R1, c1, c0, 0   // Escribir reg. control.
+ 108              	
+ 109              	
+ 110              	    // Activo las interrupciones
+ 111 00a8 800008F1 	    CPSIE i
+ 112              	
+ 113              	    idle_:
+ 114 00ac 03F020E3 	        WFI
+ARM GAS  src/kernel/startup.s 			page 3
+
+
+ 115 00b0 FDFFFFEA 	        B idle_
+ 116              	
+ 117 00b4 00000000 	    .end...
+ 117      00000000 
+ 117      00000000 
+ 117      00000000 
+ 117      00000000 
+ARM GAS  src/kernel/startup.s 			page 4
+
+
+DEFINED SYMBOLS
+src/kernel/startup.s:23     *ABS*:0000000000000010 USR_MODE
+src/kernel/startup.s:24     *ABS*:0000000000000011 FIQ_MODE
+src/kernel/startup.s:25     *ABS*:0000000000000012 IRQ_MODE
+src/kernel/startup.s:26     *ABS*:0000000000000013 SVC_MODE
+src/kernel/startup.s:27     *ABS*:0000000000000017 ABT_MODE
+src/kernel/startup.s:28     *ABS*:000000000000001b UND_MODE
+src/kernel/startup.s:29     *ABS*:000000000000001f SYS_MODE
+src/kernel/startup.s:30     *ABS*:0000000070800000 DIR_FISICA2
+src/kernel/startup.s:32     *ABS*:0000000000000080 I_BIT
+src/kernel/startup.s:33     *ABS*:0000000000000040 F_BIT
+src/kernel/startup.s:62     .text:0000000000000038 _start
+src/kernel/startup.s:42     .text:0000000000000000 _table_start
+src/kernel/startup.s:53     .text:000000000000001c add_reset_vector
+src/kernel/startup.s:43     .text:0000000000000000 $a
+src/kernel/startup.s:54     .text:0000000000000020 add_undefined_vector
+src/kernel/startup.s:55     .text:0000000000000024 add_SVC_vector
+src/kernel/startup.s:56     .text:0000000000000028 add_prefetch_vector
+src/kernel/startup.s:57     .text:000000000000002c add_data_a_vector
+src/kernel/startup.s:58     .text:0000000000000030 add_reserved_vector
+src/kernel/startup.s:59     .text:0000000000000034 add_IRQ_vector
+src/kernel/startup.s:53     .text:000000000000001c $d
+src/kernel/startup.s:63     .text:0000000000000038 _TABLE_COPY
+src/kernel/startup.s:64     .text:0000000000000038 $a
+src/kernel/startup.s:67     .text:0000000000000044 _TABLE_LOOP
+src/kernel/startup.s:74     .text:0000000000000054 _STACK_INIT
+src/kernel/startup.s:99     .text:0000000000000090 init_board
+src/kernel/startup.s:113    .text:00000000000000ac idle_
+src/kernel/startup.s:117    .text:00000000000000b4 $d
+
+UNDEFINED SYMBOLS
+_reset_vector
+_undefined_vector
+_SVC_vector
+_prefetch_vector
+_data_a_vector
+_reserved_vector
+_IRQ_vector
+__irq_stack_top__
+__fiq_stack_top__
+__abt_stack_top__
+__und_stack_top__
+__sys_stack_top__
+__svc_stack_top__
+__board_init
