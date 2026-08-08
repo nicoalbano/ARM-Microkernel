@@ -1,7 +1,58 @@
-Repositorio del alumno
+Técnicas Digitales III
+======================
 
-Se deben respetar las siguientes condiciones para trabajar con este respositorio:
+Electronic Engineering Projects
+--------------------------------
 
-1) No se subiran los binarios.
-2) Se debe respetar la estructura descripta en: https://sge.frba.utn.edu.ar/wiki/td3/doku.php?id=uso_del_git_para_la_entrega_de_tp .
-3) Solo deben subirse los archivos que forman parte de la entrega del TP. Las versiones de prueba y cualquier otro archivo, no deben subirse.
+This repository contains projects developed as part of the
+Técnicas Digitales III course at Universidad Tecnológica Nacional
+(UTN), Facultad Regional Buenos Aires.
+
+The projects focus on low-level programming, embedded systems,
+ARM architecture, operating systems concepts and hardware/software
+integration.
+
+Projects
+--------
+
+ARM Microkernel
+~~~~~~~~~~~~~~~
+
+A bare-metal microkernel developed from scratch for an ARM Cortex-A8
+platform.
+
+Main features include:
+
+* Round-robin task scheduling
+* Timer-based context switching
+* ARM exception handling
+* IRQ and SVC handling
+* Generic Interrupt Controller (GIC)
+* ARM Timer
+* User and privileged execution modes
+* Memory Management Unit (MMU)
+* Virtual memory
+* Per-task address spaces
+* TTBR0 configuration
+* C and ARM Assembly integration
+* Custom linker scripts
+
+More information can be found in the
+`ARM-Microkernel <./ARM-Microkernel/>`_ project.
+
+Technologies
+------------
+
+* C
+* ARM Assembly
+* ARM Cortex-A8
+* MMU
+* GIC
+* Bare-metal programming
+* Linker scripts
+
+Academic Context
+----------------
+
+Developed as part of the Técnicas Digitales III course at
+Universidad Tecnológica Nacional (UTN), Facultad Regional Buenos Aires.
