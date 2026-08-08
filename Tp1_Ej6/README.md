@@ -94,7 +94,7 @@ The context switching mechanism integrates C code with ARM Assembly to directly 
 ## 📂 Project Structure
 
 ```text
-Tp1_Ej6/
+ARM-Microkernel/
 ├── inc/        # Header files
 ├── src/        # Kernel source code
 ├── Makefile    # Build configuration
